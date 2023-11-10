@@ -36,7 +36,7 @@ const ProjectFilters = ({
           </span>
         </div>
         <span>TODOS</span>
-        <span className="text-slate-400">{categoriesCount.total}</span>
+        <span className="text-slate-400">{categoriesCount?.total}</span>
       </button>
 
       {categories &&

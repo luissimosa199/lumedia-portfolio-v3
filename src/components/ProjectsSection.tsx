@@ -16,7 +16,7 @@ const ProjectsSection = async () => {
       <div className="flex flex-wrap gap-2 mt-4">
         {data &&
           data.length > 0 &&
-          data.map((e: any, idx) => (
+          data.map((e: any, idx: number) => (
             <ProjectCard
               key={idx}
               name={e.name}
