@@ -11,7 +11,8 @@ interface ContactData {
   origin: string;
 }
 
-export const handleForm = async (formData: FormData) => {
+export const handleForm = async (rawFormData: string) => {
+  const formData = JSON.parse(rawFormData) as FormData;
   formData.append("origin", "portfolio");
 
   const formDataObject: ContactData = Array.from(formData.entries()).reduce(

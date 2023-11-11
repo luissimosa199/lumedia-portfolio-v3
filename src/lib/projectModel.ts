@@ -4,6 +4,9 @@ import { nanoid } from "nanoid";
 import mongoose from "mongoose";
 
 @modelOptions({
+  schemaOptions: {
+    collection: "projects",
+  },
   options: {
     allowMixed: 0,
   },

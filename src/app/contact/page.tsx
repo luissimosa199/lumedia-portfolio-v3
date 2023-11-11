@@ -20,7 +20,7 @@ const Contact = () => {
         <form
           ref={formRef}
           action={async (formData) => {
-            const response = await handleForm(formData);
+            const response = await handleForm(JSON.stringify(formData));
             if (response) {
               formRef.current?.reset();
             }
