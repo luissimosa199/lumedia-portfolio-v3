@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 @modelOptions({
   schemaOptions: {
     timestamps: true,
+    collection: "contactforms",
   },
   options: {
     allowMixed: 0,
