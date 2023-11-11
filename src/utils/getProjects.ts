@@ -18,8 +18,5 @@ export async function getProjects() {
     throw new Error("Failed to fetch data");
   }
 
-  return {
-    data: serializedResponse,
-    message: JSON.stringify({ response }),
-  };
+  return serializedResponse;
 }

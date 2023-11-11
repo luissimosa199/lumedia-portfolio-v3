@@ -14,14 +14,12 @@ interface ProjectListProps {
   projects: Project[];
   categories: string[];
   categoriesCount: CategoriesCountInterface;
-  message: string;
 }
 
 const ProjectList: FunctionComponent<ProjectListProps> = ({
   projects,
   categories,
   categoriesCount,
-  message,
 }) => {
   const [filter, setFilter] = useState<string>("all");
 
@@ -29,8 +27,6 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({
     filter === "all"
       ? projects
       : projects.filter((project) => project.category === filter);
-
-  console.log({ projects, message: JSON.parse(message) });
 
   return (
     <div>
