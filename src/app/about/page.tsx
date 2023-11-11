@@ -1,4 +1,5 @@
 import ContactLink from "@/components/ContactLink";
+import TechStack from "@/components/TechStack";
 import { faGithub, faLinkedinIn } from "@fortawesome/free-brands-svg-icons";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
@@ -50,18 +51,7 @@ const About = () => {
             </div>
           </div>
           <div>
-            <ul className="flex flex-wrap gap-2 py-4">
-              {[...Array(15)].map((e, idx) => {
-                return (
-                  <li
-                    key={idx}
-                    className="rounded-full dark:bg-slate-950 dark:text-slate-300 bg-slate-200 text-sm px-4 py-1"
-                  >
-                    <span className="capitalize">Biblioteca</span>
-                  </li>
-                );
-              })}
-            </ul>
+            <TechStack />
           </div>
         </section>
       </div>

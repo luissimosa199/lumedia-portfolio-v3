@@ -2,7 +2,6 @@ import React from "react";
 import NavButton from "./NavButton";
 import DarkModeToggle from "./DarkModeToggle";
 import NavLogo from "./NavLogo";
-import Link from "next/link";
 import NavLinks from "./NavLinks";
 
 const Navbar = () => {

@@ -14,7 +14,7 @@ const AboutSection = () => {
         <div className="border-2 rounded-full w-24 h-24"></div>
       </div>
       <p className=" dark:text-slate-300 ">
-        Desarrollador de software interesado en aprender, construir y mejorar.
+        Desarrollador de software interesado en crear, construir y mejorar.
       </p>
       <Button href="/about" />
     </section>
