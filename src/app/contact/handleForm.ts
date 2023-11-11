@@ -11,8 +11,7 @@ interface ContactData {
   origin: string;
 }
 
-export const handleForm = async (rawFormData: string) => {
-  const formData = JSON.parse(rawFormData) as FormData;
+export const handleForm = async (formData: FormData) => {
   formData.append("origin", "portfolio");
 
   const formDataObject: ContactData = Array.from(formData.entries()).reduce(
@@ -25,6 +24,7 @@ export const handleForm = async (rawFormData: string) => {
 
   await dbConnect();
   const newContact = new ContactFormModel(formDataObject);
-  const response = await newContact.save();
+  const savedContact = await newContact.save();
+  const response = savedContact.toObject();
   return response;
 };
