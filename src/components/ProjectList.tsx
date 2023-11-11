@@ -28,6 +28,8 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({
       ? projects
       : projects.filter((project) => project.category === filter);
 
+  console.log("@ProjectListComp>", projects);
+
   return (
     <div>
       <ProjectFilters
