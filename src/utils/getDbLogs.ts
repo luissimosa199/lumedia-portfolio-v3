@@ -2,11 +2,15 @@ import dbConnect from "@/lib/dbConnect";
 import { ProjectModel } from "@/lib/projectModel";
 
 export const getDbLogs = async () => {
-  await dbConnect();
+  let message;
 
-  const query = await ProjectModel.find().lean();
-
-  const message = query;
+  try {
+    await dbConnect();
+    const query = await ProjectModel.find().lean();
+    message = query;
+  } catch (error) {
+    message = error;
+  }
 
   return JSON.stringify(message);
 };
