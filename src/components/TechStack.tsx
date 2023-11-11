@@ -5,8 +5,6 @@ const TechStack = async () => {
   const data = await getTechStack();
   const techStack = JSON.parse(data) as string[];
 
-  console.log("@TechStackComp>", techStack);
-
   return (
     <ul className="flex flex-wrap gap-2 py-4">
       {techStack.map((e, idx) => {

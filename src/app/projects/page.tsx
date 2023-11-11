@@ -6,7 +6,7 @@ import { Project } from "@/lib/projectModel";
 import { getCategoriesCount } from "@/utils/getCategoriesCount";
 
 const Projects = async () => {
-  const data = await getProjects();
+  const { data, message } = await getProjects();
   const categories = await getCategories();
   const categoriesCount = await getCategoriesCount();
 
@@ -16,6 +16,7 @@ const Projects = async () => {
         projects={data as Project[]}
         categories={categories}
         categoriesCount={categoriesCount}
+        message={message}
       />
     </section>
   );
