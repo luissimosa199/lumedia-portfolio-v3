@@ -23,7 +23,7 @@ const ProjectFilters = ({
         }}
         className={`border rounded-full py-2 px-4 text-base flex gap-2 items-center ${
           filter === "all"
-            ? "border-black text-black font-semibold"
+            ? "border-black text-black font-semibold dark:text-white dark:border-white transition-all"
             : "text-slate-500"
         }`}
       >
@@ -46,7 +46,7 @@ const ProjectFilters = ({
             key={category}
             className={`border rounded-full py-2 px-4 text-base flex gap-2 items-center ${
               filter === category
-                ? "border-black text-black font-semibold"
+                ? "border-black text-black font-semibold dark:text-white dark:border-white transition-all"
                 : "text-slate-500"
             }`}
             onClick={() => {

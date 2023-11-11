@@ -18,7 +18,7 @@ const About = () => {
           </div>
         </div>
         <p className=" dark:text-slate-300 text-lg text-center">
-          Desarrollador de software interesado en aprender, construir y mejorar.
+          Desarrollador de software interesado en crear, construir y mejorar.
         </p>
       </section>
 
