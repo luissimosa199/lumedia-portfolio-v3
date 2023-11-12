@@ -31,7 +31,7 @@ const About = () => {
         </p>
       </section>
 
-      <div className="flex gap-2">
+      <div className="flex flex-col md:flex-row gap-2">
         <section className="w-fit bg-white dark:bg-violet-950 border-black p-4 rounded-3xl shadow-md mb-4">
           <div className="flex justify-between mb-2">
             <div>

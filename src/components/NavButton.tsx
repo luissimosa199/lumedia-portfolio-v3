@@ -49,7 +49,7 @@ const NavButton = () => {
         />
       </button>
       {menuVisibility && (
-        <ul className="absolute text-4xl flex flex-col gap-4 rounded-lg shadow-lg bg-white dark:bg-black dark:text-slate-200 p-4">
+        <ul className="absolute z-20 text-4xl flex flex-col gap-4 rounded-lg shadow-lg bg-white dark:bg-black dark:text-slate-200 p-4">
           <li>
             <Link href="/">Home</Link>
           </li>
