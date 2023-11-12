@@ -2,13 +2,22 @@ import ContactLink from "@/components/ContactLink";
 import TechStack from "@/components/TechStack";
 import { faGithub, faLinkedinIn } from "@fortawesome/free-brands-svg-icons";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import Image from "next/image";
 
 const About = () => {
   return (
     <div>
       <section className="w-full bg-white dark:bg-violet-950 border-black p-12 rounded-3xl shadow-md mb-4">
         <h2 className="text-slate-500 text-sm">Luis Simosa</h2>
-        <div className="border-2 rounded-full w-48 h-48 mx-auto mb-4"></div>
+        <div className="border-2 rounded-full w-48 h-48 mx-auto mb-4">
+          <Image
+            src="/lumedia-logo.png"
+            className="object-cover"
+            alt="logo"
+            width={192}
+            height={192}
+          />
+        </div>
         <div className="flex justify-between">
           <div>
             <h3 className="text-4xl font-semibold text-center my-8 dark:text-slate-200">

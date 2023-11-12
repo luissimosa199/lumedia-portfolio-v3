@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "./Button";
+import Image from "next/image";
 
 const AboutSection = () => {
   return (
@@ -11,7 +12,15 @@ const AboutSection = () => {
             Hola, me llamo Luis
           </h3>
         </div>
-        <div className="border-2 rounded-full w-24 h-24"></div>
+        <div className="border-2 rounded-full w-24 h-24">
+          <Image
+            src="/lumedia-logo.png"
+            className="object-cover"
+            alt="logo"
+            width={96}
+            height={96}
+          />
+        </div>
       </div>
       <p className=" dark:text-slate-300 ">
         Desarrollador de software interesado en crear, construir y mejorar.
