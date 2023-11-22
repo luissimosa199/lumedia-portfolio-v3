@@ -2,8 +2,9 @@ import dbConnect from "@/lib/dbConnect";
 import { ProjectModel } from "@/lib/projectModel";
 
 export const getProjectData = async (slug: string) => {
+  await dbConnect();
+
   try {
-    await dbConnect();
     const response = await ProjectModel.findOne({ slug }).lean();
     const data = JSON.stringify(response);
     return data;
