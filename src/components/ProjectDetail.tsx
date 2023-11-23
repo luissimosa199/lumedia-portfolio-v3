@@ -19,7 +19,7 @@ const ProjectDetail: FunctionComponent<ProjectDetailProps> = ({
 }) => {
   return (
     <div className="h-fit w-full border-b-2 flex flex-col justify-between mt-4 mb-8">
-      <div className="flex  gap-2 min-h-max">
+      <div className="flex flex-col items-center sm:flex-row gap-2 min-h-max">
         <div className="w-48 h-48 rounded-lg shadow-md">
           <Link href={url}>
             <div className="w-full h-full relative overflow-hidden">
@@ -32,7 +32,7 @@ const ProjectDetail: FunctionComponent<ProjectDetailProps> = ({
             </div>
           </Link>
         </div>
-        <div className="w-4/5 px-4">
+        <div className="w-full sm:w-4/5 px-4">
           <h3 className="font-semibold text-4xl mb-2 dark:text-slate-200">
             <Link href={url}>{name}</Link>
           </h3>
@@ -44,16 +44,16 @@ const ProjectDetail: FunctionComponent<ProjectDetailProps> = ({
           </p>{" "}
         </div>
       </div>
-      <div className="text-right flex flex-col">
+      <div className="text-right flex flex-col my-4">
         <Link
           href={repo}
-          className="text-2xl italic dark:text-white font-semibold"
+          className="text-2xl dark:text-white font-semibold"
         >
           Visitar repositorio <span className="text-2xl">→</span>
         </Link>
         <Link
           href={url}
-          className="text-2xl italic dark:text-white font-semibold"
+          className="text-2xl dark:text-white font-semibold"
         >
           Visitar Página <span className="text-2xl">→</span>
         </Link>
