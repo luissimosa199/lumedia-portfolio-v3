@@ -22,7 +22,7 @@ const Page = async ({ params }: { params: { slug: string } }) => {
   } = data;
 
   return (
-    <section className="w-full bg-white dark:bg-violet-950 border-black p-12 rounded-3xl shadow-md mb-4">
+    <section className="w-full bg-white dark:bg-violet-950 border-black p-2 sm:p-12 rounded-3xl shadow-md mb-4">
       <ProjectDetail
         name={name}
         subtitle={subtitle}
