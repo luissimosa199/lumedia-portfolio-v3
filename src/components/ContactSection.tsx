@@ -1,5 +1,4 @@
-import { faGithub, faLinkedinIn } from "@fortawesome/free-brands-svg-icons";
-import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { FaGithub, FaLinkedinIn, FaEnvelope } from "react-icons/fa";
 import React from "react";
 import ContactLink from "./ContactLink";
 
@@ -13,15 +12,15 @@ const ContactSection = () => {
       </div>
       <div className="flex flex-wrap gap-2">
         <ContactLink
-          primaryIcon={faGithub}
+          primaryIcon={FaGithub}
           href="https://github.com/luissimosa199"
         />
         <ContactLink
-          primaryIcon={faEnvelope}
+          primaryIcon={FaEnvelope}
           href="mailto:simosa37@gmail.com"
         />
         <ContactLink
-          primaryIcon={faLinkedinIn}
+          primaryIcon={FaLinkedinIn}
           href="https://www.linkedin.com/in/luis-simosa-43b860112/"
         />
       </div>

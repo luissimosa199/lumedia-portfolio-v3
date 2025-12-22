@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { faBurger } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FaBars } from "react-icons/fa";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -42,10 +41,8 @@ const NavButton = () => {
           setMenuVisibility(!menuVisibility);
         }}
       >
-        <FontAwesomeIcon
+        <FaBars
           className="w-full h-full"
-          size="2xl"
-          icon={faBurger}
         />
       </button>
       {menuVisibility && (
