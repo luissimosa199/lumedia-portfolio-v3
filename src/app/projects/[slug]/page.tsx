@@ -1,12 +1,18 @@
 import ProjectDetail from "@/components/ProjectDetail";
 import { Project } from "@/lib/projectModel";
 import { getProjectData } from "@/utils/getProjectData";
+import { notFound } from "next/navigation";
 import React from "react";
 
-const Page = async ({ params }: { params: { slug: string } }) => {
-  const response = await getProjectData(params.slug);
+const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  const { slug: projectSlug } = await params;
+  const response = await getProjectData(projectSlug);
 
-  const data = JSON.parse(response) as Project;
+  const data = JSON.parse(response) as Project | null;
+
+  if (!data) {
+    notFound();
+  }
 
   const {
     name,

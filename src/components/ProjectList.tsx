@@ -7,7 +7,7 @@ import { Project } from "@/lib/projectModel";
 
 export interface CategoriesCountInterface {
   total: number;
-  categories: { category: "frontend" | "backend"; count: number }[];
+  categories: { category: string; count: number }[];
 }
 
 interface ProjectListProps {

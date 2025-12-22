@@ -1,11 +1,11 @@
-export const getCategoryIcon = (category: string) => {
-  switch (category) {
-    case "frontend":
-      return `🖥️`;
+const categoryIcons: Record<string, string> = {
+  frontend: "🖥️",
+  backend: "⚙️",
+  cli: "💻",
+};
 
-    case "backend":
-      return `⚙️`;
-    default:
-      return null;
-  }
+const defaultIcon = "📁";
+
+export const getCategoryIcon = (category: string): string => {
+  return categoryIcons[category] || defaultIcon;
 };
