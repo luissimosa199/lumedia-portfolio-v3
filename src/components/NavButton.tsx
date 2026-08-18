@@ -9,9 +9,14 @@ const NavButton = () => {
   const navButtonRef = useRef<HTMLDivElement | null>(null);
   const pathName = usePathname();
 
-  useEffect(() => {
+  // Close the menu when the route changes. Adjusting state during render
+  // (rather than in an effect) avoids an extra commit-then-cascading-render
+  // pass: https://react.dev/learn/you-might-not-need-an-effect
+  const [prevPathName, setPrevPathName] = useState(pathName);
+  if (pathName !== prevPathName) {
+    setPrevPathName(pathName);
     setMenuVisibility(false);
-  }, [pathName]);
+  }
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
