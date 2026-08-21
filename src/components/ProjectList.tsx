@@ -3,7 +3,7 @@
 import React, { FunctionComponent, useState } from "react";
 import ProjectCard from "./ProjectCard";
 import ProjectFilters from "./ProjectFilters";
-import { Project } from "@/lib/projectModel";
+import { Project } from "@/lib/projectTypes";
 
 export interface CategoriesCountInterface {
   total: number;
@@ -14,29 +14,43 @@ interface ProjectListProps {
   projects: Project[];
   categories: string[];
   categoriesCount: CategoriesCountInterface;
+  techStack: string[];
 }
 
 const ProjectList: FunctionComponent<ProjectListProps> = ({
   projects,
   categories,
   categoriesCount,
+  techStack,
 }) => {
-  const [filter, setFilter] = useState<string>("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [techFilter, setTechFilter] = useState<string>("all");
 
-  const filteredProjects =
-    filter === "all"
-      ? projects
-      : projects.filter((project) => project.category === filter);
+  const filteredProjects = projects.filter(
+    (project) =>
+      (categoryFilter === "all" || project.category === categoryFilter) &&
+      (techFilter === "all" || project.tags.includes(techFilter))
+  );
 
   return (
     <div>
       <ProjectFilters
         categories={categories}
-        setFilter={setFilter}
-        filter={filter}
+        techStack={techStack}
+        selectedCategory={categoryFilter}
+        setSelectedCategory={setCategoryFilter}
+        selectedTech={techFilter}
+        setSelectedTech={setTechFilter}
         categoriesCount={categoriesCount}
+        projects={projects}
       />
-      <div className="h-fit">
+      <div
+        className="h-fit"
+        aria-live="polite"
+        data-testid="project-result-count"
+        data-count={filteredProjects.length}
+      >
+        <span className="sr-only">{filteredProjects.length} proyectos</span>
         {filteredProjects &&
           filteredProjects.length > 0 &&
           filteredProjects.map((e: Project, idx: number) => (
@@ -48,6 +62,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({
               slug={e.slug}
               image={e.image}
               tags={e.tags}
+              category={e.category}
             />
           ))}
       </div>

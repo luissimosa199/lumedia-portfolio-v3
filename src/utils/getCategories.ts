@@ -1,15 +1,17 @@
 "use server";
-import dbConnect from "@/lib/dbConnect";
-import { ProjectModel } from "@/lib/projectModel";
+import { getPostgresPool } from "@/lib/postgresPool";
 
 export async function getCategories() {
-  await dbConnect();
+  const response = await getPostgresPool().query<{ category: string }>(
+    `SELECT DISTINCT category
+     FROM projects
+     WHERE category IS NOT NULL
+     ORDER BY category ASC`
+  );
 
-  const response = await ProjectModel.distinct("category");
-
-  if (!response) {
+  if (!response.rows) {
     throw new Error("Failed to fetch data");
   }
 
-  return response;
+  return response.rows.map(({ category }) => category);
 }

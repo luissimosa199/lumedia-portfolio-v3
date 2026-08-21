@@ -1,41 +1,30 @@
 "use server";
-import dbConnect from "@/lib/dbConnect";
-import { ProjectModel } from "@/lib/projectModel";
+import { getPostgresPool } from "@/lib/postgresPool";
+import { CategoriesCount } from "@/lib/projectTypes";
 
 export async function getCategoriesCount() {
-  await dbConnect();
+  const response = await getPostgresPool().query<{
+    category: string;
+    count: number;
+  }>(
+    `SELECT category, COUNT(*)::int AS count
+     FROM projects
+     WHERE category IS NOT NULL
+     GROUP BY category
+     ORDER BY category ASC`
+  );
 
-  const response = await ProjectModel.aggregate([
-    {
-      $group: {
-        _id: "$category",
-        count: { $sum: 1 },
-      },
-    },
-    {
-      $group: {
-        _id: null,
-        total: { $sum: "$count" },
-        categories: {
-          $push: {
-            category: "$_id",
-            count: "$count",
-          },
-        },
-      },
-    },
-    {
-      $project: {
-        _id: 0,
-        total: 1,
-        categories: 1,
-      },
-    },
-  ]);
-
-  if (!response) {
+  if (!response.rows) {
     throw new Error("Failed to fetch data");
   }
 
-  return response[0];
+  const categories = response.rows.map(({ category, count }) => ({
+    category,
+    count,
+  }));
+
+  return {
+    total: categories.reduce((total, item) => total + item.count, 0),
+    categories,
+  } satisfies CategoriesCount;
 }

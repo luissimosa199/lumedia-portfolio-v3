@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --cache"
+    "lint": "eslint . --cache",
+    "check:migration": "node scripts/check-migration.mjs",
+    "test:postgres": "DB_URL=\"${DB_URL:-$DEV_DATABASE_URL}\" tsx tests/postgres.test.ts",
+    "test:contact": "DB_URL=\"${DB_URL:-$DEV_DATABASE_URL}\" tsx tests/contact.test.ts"
   },
   "engines": {
     "node": ">=24.0.0"
@@ -14,16 +17,15 @@
   "dependencies": {
     "@aws-sdk/client-ses": "^3.454.0",
     "@aws-sdk/client-sesv2": "^3.454.0",
-    "@typegoose/typegoose": "^11.6.0",
-    "mongodb": "^6.2.0",
-    "mongoose": "^7.6.1",
     "next": "^16.1.0",
+    "pg": "^8.23.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-icons": "^5.5.0"
   },
   "devDependencies": {
     "@types/node": "^25.0.3",
+    "@types/pg": "^8.15.6",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10",
@@ -31,6 +33,7 @@
     "eslint-config-next": "^16.1.0",
     "postcss": "^8",
     "tailwindcss": "^3",
+    "tsx": "^4.20.6",
     "typescript": "^5"
   }
 }

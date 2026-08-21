@@ -1,15 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FunctionComponent } from "react";
+import { Project } from "@/lib/projectTypes";
 
-interface ProjectCardProps {
-  name: string;
-  subtitle: string;
-  image: string;
-  url: string;
-  slug: string;
-  tags: string[];
-}
+type ProjectCardProps = Pick<
+  Project,
+  "name" | "subtitle" | "image" | "url" | "slug" | "tags" | "category"
+>;
 
 const ProjectCard: FunctionComponent<ProjectCardProps> = ({
   name,
@@ -18,9 +15,16 @@ const ProjectCard: FunctionComponent<ProjectCardProps> = ({
   url,
   slug,
   tags,
+  category,
 }) => {
   return (
-    <div className="h-fit w-full border-b-2 flex flex-col justify-between mt-4 mb-8">
+    <article
+      className="h-fit w-full border-b-2 flex flex-col justify-between mt-4 mb-8"
+      data-testid="project-card"
+      data-category={category}
+      data-slug={slug}
+      data-tags={`|${tags.join("|")}|`}
+    >
       <div className="flex items-center gap-2 min-h-max">
         <div className="w-24 h-24 rounded-lg shadow-md">
           <Link href={url}>
@@ -29,7 +33,7 @@ const ProjectCard: FunctionComponent<ProjectCardProps> = ({
                 src={image}
                 fill
                 className="object-contain absolute"
-                alt=""
+                alt={name}
               />
             </div>
           </Link>
@@ -59,7 +63,7 @@ const ProjectCard: FunctionComponent<ProjectCardProps> = ({
           );
         })}
       </ul>
-    </div>
+    </article>
   );
 };
 
