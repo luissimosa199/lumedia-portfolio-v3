@@ -6,7 +6,7 @@ const TechStack = async () => {
   const techStack = JSON.parse(data) as string[];
 
   return (
-    <ul className="flex flex-wrap gap-2 py-4">
+    <ul className="flex flex-wrap gap-2 py-4" aria-label="Tecnologías">
       {techStack.map((e, idx) => {
         return (
           <li

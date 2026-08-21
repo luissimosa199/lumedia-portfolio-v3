@@ -1,82 +1,49 @@
 "use server";
 
-import { ContactFormModel } from "@/lib/contactFormModel";
-import dbConnect from "@/lib/dbConnect";
-import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
+import { CONTACT_ORIGIN, isContactInput, type ContactInput } from "@/lib/contactSchema";
+import {
+  createContactService,
+  type ContactEmailSender,
+} from "@/lib/contactService";
+import type { ContactRepository } from "@/lib/contactRepository";
 
-interface ContactData {
-  [key: string]: FormDataEntryValue;
-  name: string;
-  email: string;
-  message: string;
-  origin: string;
+export interface HandleFormDependencies {
+  repository?: ContactRepository;
+  emailSender?: ContactEmailSender;
 }
 
-export const handleForm = async (formData: FormData) => {
-  formData.append("origin", "portfolio");
+export interface ContactFormResult {
+  ok: boolean;
+  message: string;
+}
 
-  const client = new SESv2Client({
-    region: "us-east-2",
-    credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
-    },
-  });
+const successMessage = "Mensaje enviado correctamente.";
+const failureMessage = "No se pudo enviar el mensaje. Inténtalo de nuevo.";
 
-  const formDataObject: ContactData = Array.from(formData.entries()).reduce(
-    (obj, [key, value]) => {
-      obj[key] = value;
-      return obj;
-    },
-    {} as ContactData
-  );
+function getText(formData: FormData, field: string) {
+  const value = formData.get(field);
+  return typeof value === "string" ? value : "";
+}
 
-  const params = {
-    Destination: {
-      ToAddresses: ["simosa37@gmail.com"],
-    },
-    Content: {
-      Simple: {
-        Subject: {
-          Data: "Test Email",
-          Charset: "UTF-8",
-        },
-        Body: {
-          Text: {
-            Data: `<div>
-            <h1>Recibiste un contacto desde el portafolio</h1>
-            <ul>
-              <li>De: ${formDataObject.name}</li>
-              <li>Email: ${formDataObject.email}</li>
-              <li>${formDataObject.message}</li>
-            </ul>
-          </div>`,
-            Charset: "UTF-8",
-          },
-          Html: {
-            Data: `<div>
-              <h1>Recibiste un contacto desde el portafolio</h1>
-              <ul>
-                <li>De: ${formDataObject.name}</li>
-                <li>Email: ${formDataObject.email}</li>
-                <li>${formDataObject.message}</li>
-              </ul>
-            </div>`,
-            Charset: "UTF-8",
-          },
-        },
-      },
-    },
-    FromEmailAddress: "doxacontacts01@gmail.com",
+export const handleForm = async (
+  formData: FormData,
+  dependencies?: HandleFormDependencies
+): Promise<ContactFormResult> => {
+  const contact: ContactInput = {
+    name: getText(formData, "name"),
+    email: getText(formData, "email"),
+    message: getText(formData, "message"),
+    origin: CONTACT_ORIGIN,
   };
 
-  await dbConnect();
-  const newContact = new ContactFormModel(formDataObject);
-  const savedContact = await newContact.save();
+  if (!isContactInput(contact)) {
+    return { ok: false, message: failureMessage };
+  }
 
-  const command = new SendEmailCommand(params);
-  const emailResponse = await client.send(command);
-
-  const response = savedContact.toObject();
-  return response;
+  try {
+    await createContactService(dependencies).submit(contact);
+    return { ok: true, message: successMessage };
+  } catch {
+    return { ok: false, message: failureMessage };
+  }
 };

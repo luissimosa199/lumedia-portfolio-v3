@@ -1,8 +1,11 @@
 import ProjectDetail from "@/components/ProjectDetail";
-import { Project } from "@/lib/projectModel";
+import { Project } from "@/lib/projectTypes";
 import { getProjectData } from "@/utils/getProjectData";
 import { notFound } from "next/navigation";
 import React from "react";
+
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
 
 const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug: projectSlug } = await params;

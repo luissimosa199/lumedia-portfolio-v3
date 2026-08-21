@@ -1,11 +1,26 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { handleForm } from "./handleForm";
 
-const Contact = () => {
+const SubmitButton = () => {
   const { pending } = useFormStatus();
+
+  return (
+    <button
+      type="submit"
+      className="shadow-sm md:w-1/4 md:self-center rounded-full bg-violet-700 py-4 px-8 text-md text-white uppercase lg:hover:scale-105 transition-all active:opacity-75"
+      disabled={pending}
+    >
+      {pending ? "Enviando..." : "Enviar"}{" "}
+      <span className="text-xl">→</span>
+    </button>
+  );
+};
+
+const Contact = () => {
   const formRef = useRef<HTMLFormElement | null>(null);
+  const [result, setResult] = useState<Awaited<ReturnType<typeof handleForm>> | null>(null);
 
   return (
     <section className="w-full bg-white dark:bg-violet-950 border-black p-4 rounded-3xl shadow-md mb-4">
@@ -21,8 +36,11 @@ const Contact = () => {
           ref={formRef}
           action={async (formData) => {
             const response = await handleForm(formData);
+            setResult(response);
             if (response) {
-              formRef.current?.reset();
+              if (response.ok) {
+                formRef.current?.reset();
+              }
             }
           }}
           className="flex flex-col gap-6"
@@ -45,13 +63,12 @@ const Contact = () => {
             placeholder="Tu mensaje"
             className="rounded-lg border p-4 w-full bg-slate-100"
           />
-          <button
-            type="submit"
-            className="shadow-sm md:w-1/4 md:self-center rounded-full bg-violet-700 py-4 px-8 text-md text-white uppercase lg:hover:scale-105 transition-all active:opacity-75"
-          >
-            {pending ? "Enviando..." : "Enviar"}{" "}
-            <span className="text-xl">→</span>
-          </button>
+          <SubmitButton />
+          {result ? (
+            <p role="alert" className="text-center" aria-live="polite">
+              {result.message}
+            </p>
+          ) : null}
         </form>
       </div>
     </section>

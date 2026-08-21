@@ -2,6 +2,7 @@ import React from "react";
 import ProjectCard from "./ProjectCard";
 import Button from "./Button";
 import { getProjects } from "@/utils/getProjects";
+import { Project } from "@/lib/projectTypes";
 
 const ProjectsSection = async () => {
   const data = await getProjects();
@@ -16,7 +17,7 @@ const ProjectsSection = async () => {
       <div className="flex flex-wrap gap-2 mt-4">
         {data &&
           data.length > 0 &&
-          data.map((e: any, idx: number) => (
+          data.map((e: Project, idx: number) => (
             <ProjectCard
               key={idx}
               name={e.name}
@@ -25,6 +26,7 @@ const ProjectsSection = async () => {
               slug={e.slug}
               image={e.image}
               tags={e.tags}
+              category={e.category}
             />
           ))}
       </div>

@@ -1,13 +1,9 @@
-import dbConnect from "@/lib/dbConnect";
-import { ProjectModel } from "@/lib/projectModel";
+import { loadProjects } from "@/lib/projectTypes";
 
 export const getProjectData = async (slug: string) => {
-  await dbConnect();
-
   try {
-    const response = await ProjectModel.findOne({ slug }).lean();
-    const data = JSON.stringify(response);
-    return data;
+    const [project] = await loadProjects(slug);
+    return JSON.stringify(project ?? null);
   } catch (error) {
     throw new Error(JSON.stringify(error));
   }

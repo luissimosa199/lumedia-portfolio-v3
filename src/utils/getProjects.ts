@@ -1,22 +1,12 @@
 "use server";
-import dbConnect from "@/lib/dbConnect";
-import { Project, ProjectModel } from "@/lib/projectModel";
+import { loadProjects } from "@/lib/projectTypes";
 
 export async function getProjects() {
-  await dbConnect();
+  const projects = await loadProjects();
 
-  const response = (await ProjectModel.find().lean()) as Project[];
-
-  const serializedResponse = JSON.parse(JSON.stringify(response)).map(
-    (e: Project) => ({
-      ...e,
-      _id: e._id.toString(),
-    })
-  );
-
-  if (!serializedResponse) {
+  if (!projects) {
     throw new Error("Failed to fetch data");
   }
 
-  return serializedResponse;
+  return projects;
 }
