@@ -16,7 +16,7 @@ async function main() {
     body: string;
     category: string;
     cover_url: string;
-    live_url: string;
+    live_url: string | null;
     repo_url: string;
     tags: string[] | null;
   }>(
@@ -28,29 +28,53 @@ async function main() {
 
   assert.ok(source.rows.length > 0, "the PostgreSQL project fixture is present");
 
-  const projects = await getProjects();
+  const projects = await getProjects("es");
+  const englishProjects = await getProjects("en");
   assert.equal(projects.length, source.rows.length);
+  assert.deepEqual(
+    englishProjects.map(({ slug }) => slug),
+    projects.map(({ slug }) => slug),
+    "English translations must preserve project ordering and slugs"
+  );
 
   const firstSource = source.rows[0];
   const firstProject = projects.find(
     (project) => project.slug === firstSource.slug
   );
+  const firstEnglishProject = englishProjects.find(
+    (project) => project.slug === firstSource.slug
+  );
   assert.ok(firstProject);
+  assert.ok(firstEnglishProject);
   assert.equal(firstProject._id, firstSource.legacy_id ?? firstSource.id);
+  assert.equal(firstProject.name, firstSource.name);
+  assert.equal(firstProject.subtitle, firstSource.subtitle);
   assert.equal(firstProject.text, firstSource.body);
+  assert.equal(firstProject.category, firstSource.category);
   assert.equal(firstProject.image, firstSource.cover_url);
   assert.equal(firstProject.url, firstSource.live_url || firstSource.repo_url);
   assert.equal(firstProject.repo, firstSource.repo_url);
   assert.deepEqual(firstProject.tags, firstSource.tags ?? []);
+  assert.equal(firstEnglishProject._id, firstProject._id);
+  assert.equal(firstEnglishProject.slug, firstProject.slug);
+  assert.equal(firstEnglishProject.category, firstProject.category);
+  assert.equal(firstEnglishProject.image, firstProject.image);
+  assert.equal(firstEnglishProject.url, firstProject.url);
+  assert.equal(firstEnglishProject.repo, firstProject.repo);
+  assert.deepEqual(firstEnglishProject.tags, firstProject.tags);
 
-  const imageSource = await pool.query<{ url: string }>(
-    `SELECT url
+  const imageSource = await pool.query<{ url: string; caption: string }>(
+    `SELECT url, caption
      FROM project_images
      WHERE project_id = $1
      ORDER BY idx ASC`,
     [firstSource.id]
   );
   assert.deepEqual(firstProject.gallery, imageSource.rows.map(({ url }) => url));
+  assert.deepEqual(
+    firstProject.galleryCaptions,
+    imageSource.rows.map(({ caption }) => caption)
+  );
 
   const projectData = JSON.parse(await getProjectData(firstSource.slug));
   assert.deepEqual(projectData, firstProject);

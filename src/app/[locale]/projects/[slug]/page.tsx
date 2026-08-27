@@ -1,3 +1,4 @@
+import { setRequestLocale } from "next-intl/server";
 import ProjectDetail from "@/components/ProjectDetail";
 import { Project } from "@/lib/projectTypes";
 import { getProjectData } from "@/utils/getProjectData";
@@ -7,8 +8,14 @@ import React from "react";
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 
-const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
-  const { slug: projectSlug } = await params;
+const Page = async ({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}) => {
+  const { locale, slug: projectSlug } = await params;
+  setRequestLocale(locale);
+
   const response = await getProjectData(projectSlug);
 
   const data = JSON.parse(response) as Project | null;

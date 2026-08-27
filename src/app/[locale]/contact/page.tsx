@@ -1,7 +1,8 @@
 "use client";
+
 import React, { useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
-import { handleForm } from "./handleForm";
+import { handleForm } from "@/app/contact/handleForm";
 
 const SubmitButton = () => {
   const { pending } = useFormStatus();

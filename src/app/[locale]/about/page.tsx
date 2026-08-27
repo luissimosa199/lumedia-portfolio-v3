@@ -1,9 +1,17 @@
+import { setRequestLocale } from "next-intl/server";
 import ContactLink from "@/components/ContactLink";
 import TechStack from "@/components/TechStack";
 import { FaGithub, FaLinkedinIn, FaEnvelope } from "react-icons/fa";
 import Image from "next/image";
 
-const About = () => {
+const About = async ({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) => {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   return (
     <div>
       <section className="w-full bg-white dark:bg-violet-950 border-black p-12 rounded-3xl shadow-md mb-4">

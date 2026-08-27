@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "title": "Portafolio de Luis Simosa",
+    "description": "Desarrollador web"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "about": "Sobre mí",
+    "contact": "Contacto",
+    "projects": "Proyectos"
+  },
+  "home": {
+    "about": "Sobre mí",
+    "contact": "Contacto",
+    "projects": "Mis proyectos"
+  },
+  "about": {
+    "name": "Luis Simosa",
+    "greeting": "Hola, me llamo Luis",
+    "headline": "Apasionado por construir herramientas útiles.",
+    "description": "Desarrollador de software interesado en crear, construir y mejorar.",
+    "contact": "Contáctame",
+    "familiarWith": "Familiarizado con:"
+  },
+  "contact": {
+    "title": "Contacto",
+    "links": "Enlaces",
+    "intro": "Puedes contactarme a través de este formulario o enviando un correo a simosa37@gmail.com",
+    "namePlaceholder": "Tu nombre",
+    "emailPlaceholder": "Tu email",
+    "messagePlaceholder": "Tu mensaje",
+    "send": "Enviar",
+    "sending": "Enviando...",
+    "success": "Mensaje enviado correctamente.",
+    "failure": "No se pudo enviar el mensaje. Inténtalo de nuevo."
+  },
+  "projects": {
+    "title": "Proyectos",
+    "allCategories": "Todas las categorías",
+    "allTechnologies": "Todas las tecnologías",
+    "filterLabel": "Filtros de proyectos",
+    "categoryFilter": "Filtrar por categoría",
+    "technologyFilter": "Filtrar por tecnología",
+    "learnMore": "Saber más",
+    "viewAll": "Ver todos",
+    "developedWith": "Desarrollado con:",
+    "visitRepository": "Visitar repositorio",
+    "visitPage": "Visitar página",
+    "resultCount": "{count} proyectos"
+  },
+  "common": {
+    "logoAlt": "logotipo",
+    "photoAlt": "foto"
+  },
+  "footer": {
+    "copyright": "Luis Simosa, 2023"
+  },
+  "projectContent": {
+    "ticker-scanner": {
+      "name": "Ticker Scanner",
+      "subtitle": "REST API con Nestjs, 52% de cobertura, scraping facturas Cencosud, futuro sin papel.",
+      "text": "Ticker Scanner, mi proyecto personal en Next.js, con un sólido 52% de cobertura de pruebas, se centra en el scraping de facturas de supermercados Cencosud (Día, Jumbo, Vea, Easy). La visión a largo plazo es allanar el camino hacia un futuro sin papel, donde la información de las transacciones sea gestionada de manera eficiente y sostenible. Con autenticación segura y una base de datos en MongoDB, este backend ofrece una solución práctica y valiosa para organizar y analizar datos de facturas, allanando el camino hacia una experiencia sin papel más ecológica y eficiente.",
+      "galleryCaptions": []
+    },
+    "lumedia-blog": {
+      "name": "Lumedia Blog",
+      "subtitle": "Blog simple y elegante: notas útiles sobre Next.js, Nginx y Docker para simplificar procesos.",
+      "text": "Bienvenido a mi blog práctico, donde encuentras tips directos sobre Next.js, Nginx y Docker. Sin rodeos, solo información útil para simplificar tus procesos. ¡Explora y simplifica!",
+      "galleryCaptions": ["", ""]
+    },
+    "portafolio": {
+      "name": "Portafolio",
+      "subtitle": "Portafolio minimalista: diseño dual, tema oscuro y claro, iconos atractivos.",
+      "text": "Descubre mi portafolio minimalista con un diseño dual que se adapta a tus preferencias, ya sea tema oscuro o claro. Explora de manera sencilla y encuentra información relevante sobre mis proyectos y habilidades. Los iconos atractivos añaden un toque especial, haciendo que la experiencia sea tanto visualmente agradable como informativa. ¡Bienvenido a mi espacio!",
+      "galleryCaptions": ["", "", "", ""]
+    },
+    "gbooks": {
+      "name": "Gbooks",
+      "subtitle": "GBooks: Buscador de libros históricos sin derechos de autor en la API de Google Books.",
+      "text": "GBooks es mi proyecto personal dedicado a simplificar la búsqueda y descarga de libros históricos y documentos antiguos sin derechos de autor. Utilizando la API de Google Books, este buscador ofrece una manera fácil y rápida de acceder a obras valiosas del pasado. Explora la riqueza de la historia y la cultura a través de esta herramienta diseñada para facilitar el acceso a la sabiduría del ayer. ¡Descubre y descarga conocimiento sin restricciones con GBooks!",
+      "galleryCaptions": ["", "", "", ""]
+    },
+    "ticker-scanner-web": {
+      "name": "Ticker Scanner WEB",
+      "subtitle": "Aplicación web para analizar y almacenar la información de tus facturas de supermercado",
+      "text": "Ticker Scanner está desarrollado utilizando Next.js 14. La funcionalidad principal es escanear el código QR de las facturas de compra del supermercado para extraer y analizar la información contenida, como el detalle de productos, precios, totales, etc. Los usuarios pueden registrarse en la aplicación y al escanear una factura, ésta se guardará en la base de datos vinculada a su cuenta. De esta manera, se crea un historial personalizado de compras que permite hacer seguimiento del gasto y los hábitos de consumo. La app está optimizada para utilizarse desde el celular, aprovechando la cámara para capturar el código QR y mostrar la información de forma rápida y cómoda. En resumen, Ticker Scanner digitaliza y analiza las facturas de compra para brindar una experiencia de usuario más eficiente e informada.",
+      "galleryCaptions": ["", "", "", ""]
+    },
+    "ns-cli-runner": {
+      "name": "NetSuite CLI Runner",
+      "subtitle": "A command-line interface (CLI) tool for executing ad-hoc SuiteScript 2.1 code directly against NetSuite accounts.",
+      "text": "This project provides a CLI alternative to the NetSuite Instant Runner VS Code extension. It allows developers to execute SuiteScript code from the command line, get structured results, and retrieve execution logs - perfect for automation, testing, and AI agent integration.",
+      "galleryCaptions": []
+    }
+  }
+}

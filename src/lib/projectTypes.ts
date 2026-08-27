@@ -9,7 +9,7 @@ export interface PostgresProjectRow {
   body: string;
   category: string;
   cover_url: string;
-  live_url: string;
+  live_url: string | null;
   repo_url: string;
   tags: string[] | null;
   display_order: number | null;
@@ -21,7 +21,7 @@ export interface PostgresProjectImageRow {
   project_id: string;
   idx: number;
   url: string;
-  caption: string | null;
+  caption: string;
 }
 
 export interface Project {
@@ -32,6 +32,7 @@ export interface Project {
   text: string;
   image: string;
   gallery: string[];
+  galleryCaptions?: string[];
   slug: string;
   url: string;
   repo: string;
@@ -60,7 +61,7 @@ const projectColumns = `
   updated_at
 `;
 
-export async function loadProjects(slug?: string) {
+export async function loadProjects(slug?: string): Promise<Project[]> {
   const pool = getPostgresPool();
   const values = slug === undefined ? [] : [slug];
   const whereClause = slug === undefined ? "" : "WHERE slug = $1";
@@ -87,10 +88,10 @@ export async function loadProjects(slug?: string) {
     [projectIds]
   );
 
-  const galleryByProject = new Map<string, string[]>();
+  const galleryByProject = new Map<string, PostgresProjectImageRow[]>();
   for (const image of images.rows) {
     const gallery = galleryByProject.get(image.project_id) ?? [];
-    gallery.push(image.url);
+    gallery.push(image);
     galleryByProject.set(image.project_id, gallery);
   }
 
@@ -99,8 +100,10 @@ export async function loadProjects(slug?: string) {
 
 function mapProject(
   project: PostgresProjectRow,
-  galleryByProject: Map<string, string[]>
+  galleryByProject: Map<string, PostgresProjectImageRow[]>
 ): Project {
+  const gallery = galleryByProject.get(project.id) ?? [];
+
   return {
     _id: project.legacy_id ?? project.id,
     name: project.name,
@@ -108,7 +111,8 @@ function mapProject(
     category: project.category,
     text: project.body,
     image: project.cover_url,
-    gallery: galleryByProject.get(project.id) ?? [],
+    gallery: gallery.map(({ url }) => url),
+    galleryCaptions: gallery.map(({ caption }) => caption),
     slug: project.slug,
     url: project.live_url || project.repo_url,
     repo: project.repo_url,

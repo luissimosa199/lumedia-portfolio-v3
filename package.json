@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --cache",
+    "check:locale-config": "node scripts/check-locale-config.mjs",
+    "check:locale-coverage": "tsx scripts/check-locale-coverage.mjs",
     "check:migration": "node scripts/check-migration.mjs",
     "test:postgres": "DB_URL=\"${DB_URL:-$DEV_DATABASE_URL}\" tsx tests/postgres.test.ts",
     "test:contact": "DB_URL=\"${DB_URL:-$DEV_DATABASE_URL}\" tsx tests/contact.test.ts"
@@ -18,6 +20,7 @@
     "@aws-sdk/client-ses": "^3.454.0",
     "@aws-sdk/client-sesv2": "^3.454.0",
     "next": "^16.1.0",
+    "next-intl": "^4.14.0",
     "pg": "^8.23.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",

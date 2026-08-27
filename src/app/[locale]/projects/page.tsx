@@ -1,3 +1,4 @@
+import { setRequestLocale } from "next-intl/server";
 import ProjectList from "@/components/ProjectList";
 import { getProjects } from "@/utils/getProjects";
 import { getCategories } from "@/utils/getCategories";
@@ -5,7 +6,14 @@ import { getTechStack } from "@/utils/getTechStack";
 import React from "react";
 import { getCategoriesCount } from "@/utils/getCategoriesCount";
 
-const Projects = async () => {
+const Projects = async ({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) => {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const data = await getProjects();
   const categories = await getCategories();
   const categoriesCount = await getCategoriesCount();
