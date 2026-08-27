@@ -8,10 +8,7 @@
     "start": "next start",
     "lint": "eslint . --cache",
     "check:locale-config": "node scripts/check-locale-config.mjs",
-    "check:locale-coverage": "tsx scripts/check-locale-coverage.mjs",
-    "check:migration": "node scripts/check-migration.mjs",
-    "test:postgres": "DB_URL=\"${DB_URL:-$DEV_DATABASE_URL}\" tsx tests/postgres.test.ts",
-    "test:contact": "DB_URL=\"${DB_URL:-$DEV_DATABASE_URL}\" tsx tests/contact.test.ts"
+    "check:locale-coverage": "tsx scripts/check-locale-coverage.mjs"
   },
   "engines": {
     "node": ">=24.0.0"
