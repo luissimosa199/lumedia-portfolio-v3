@@ -1,6 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { FunctionComponent } from "react";
+import { useTranslations } from "next-intl";
+import { Link as LocaleLink } from "@/i18n/navigation";
 import { Project } from "@/lib/projectTypes";
 
 type ProjectCardProps = Pick<
@@ -17,6 +21,8 @@ const ProjectCard: FunctionComponent<ProjectCardProps> = ({
   tags,
   category,
 }) => {
+  const t = useTranslations("projects");
+
   return (
     <article
       className="h-fit w-full border-b-2 flex flex-col justify-between mt-4 mb-8"
@@ -43,12 +49,13 @@ const ProjectCard: FunctionComponent<ProjectCardProps> = ({
             <Link href={url}>{name}</Link>
           </h3>
           <p className="text-slate-800 dark:text-slate-400">{subtitle}</p>{" "}
-          <Link
+          <LocaleLink
             href={`/projects/${slug}`}
             className="font-semibold dark:text-slate-200"
           >
-            Saber más<span className="leading-6 text-lg ml-2">→</span>
-          </Link>
+            {t("learnMore")}
+            <span className="leading-6 text-lg ml-2">→</span>
+          </LocaleLink>
         </div>
       </div>
       <ul className="flex flex-wrap gap-2 py-4">

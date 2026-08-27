@@ -1,6 +1,7 @@
 "use client";
 
 import React, { FunctionComponent, useState } from "react";
+import { useTranslations } from "next-intl";
 import ProjectCard from "./ProjectCard";
 import ProjectFilters from "./ProjectFilters";
 import { Project } from "@/lib/projectTypes";
@@ -23,6 +24,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({
   categoriesCount,
   techStack,
 }) => {
+  const t = useTranslations("projects");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [techFilter, setTechFilter] = useState<string>("all");
 
@@ -50,7 +52,9 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({
         data-testid="project-result-count"
         data-count={filteredProjects.length}
       >
-        <span className="sr-only">{filteredProjects.length} proyectos</span>
+        <span className="sr-only">
+          {t("resultCount", { count: filteredProjects.length })}
+        </span>
         {filteredProjects &&
           filteredProjects.length > 0 &&
           filteredProjects.map((e: Project, idx: number) => (

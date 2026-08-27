@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useTranslations } from "next-intl";
 import { CategoriesCountInterface } from "./ProjectList";
 import { getCategoryIcon } from "@/utils/getCategoryIcon";
 import { Project } from "@/lib/projectTypes";
@@ -24,6 +25,8 @@ const ProjectFilters = ({
   categoriesCount: CategoriesCountInterface;
   projects: Project[];
 }) => {
+  const t = useTranslations("projects");
+
   const techCount = (tech: string) =>
     projects.filter(
       (project) =>
@@ -32,9 +35,9 @@ const ProjectFilters = ({
     ).length;
 
   return (
-    <div className="flex flex-col gap-4" aria-label="Filtros de proyectos">
+    <div className="flex flex-col gap-4" aria-label={t("filterLabel")}>
       <fieldset className="flex flex-wrap gap-2">
-        <legend className="sr-only">Filtrar por categoría</legend>
+        <legend className="sr-only">{t("categoryFilter")}</legend>
         <button
           type="button"
           data-filter-category="all"
@@ -46,8 +49,8 @@ const ProjectFilters = ({
               : "text-slate-500"
           }`}
         >
-          <span role="img" aria-label="todas las categorías">🌐</span>
-          <span>TODAS LAS CATEGORÍAS</span>
+          <span role="img" aria-label={t("allCategories")}>🌐</span>
+          <span className="uppercase">{t("allCategories")}</span>
           <span className="text-slate-400">{categoriesCount?.total}</span>
         </button>
 
@@ -79,7 +82,7 @@ const ProjectFilters = ({
       </fieldset>
 
       <fieldset className="flex flex-wrap gap-2">
-        <legend className="sr-only">Filtrar por tecnología</legend>
+        <legend className="sr-only">{t("technologyFilter")}</legend>
         <button
           type="button"
           data-filter-tech="all"
@@ -91,7 +94,7 @@ const ProjectFilters = ({
               : "text-slate-500"
           }`}
         >
-          <span>TODAS LAS TECNOLOGÍAS</span>
+          <span className="uppercase">{t("allTechnologies")}</span>
           <span className="text-slate-400">
             {projects.filter(
               (project) =>

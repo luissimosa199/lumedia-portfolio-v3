@@ -1,14 +1,14 @@
-import Link from "next/link";
 import React, { FunctionComponent } from "react";
+import { Link } from "@/i18n/navigation";
 
 interface ButtonProps {
-  text?: string;
+  text: string;
   icon?: string;
   href: string;
 }
 
 const Button: FunctionComponent<ButtonProps> = ({
-  text = "Saber más",
+  text,
   icon = "→",
   href,
 }) => {

@@ -1,10 +1,12 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { FaBars } from "react-icons/fa";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 const NavButton = () => {
+  const t = useTranslations("navigation");
   const [menuVisibility, setMenuVisibility] = useState<boolean>(false);
   const navButtonRef = useRef<HTMLDivElement | null>(null);
   const pathName = usePathname();
@@ -53,16 +55,16 @@ const NavButton = () => {
       {menuVisibility && (
         <ul className="absolute z-20 text-4xl flex flex-col gap-4 rounded-lg shadow-lg bg-white dark:bg-black dark:text-slate-200 p-4">
           <li>
-            <Link href="/">Home</Link>
+            <Link href="/">{t("home")}</Link>
           </li>
           <li>
-            <Link href="/about">Sobre mi</Link>
+            <Link href="/about">{t("about")}</Link>
           </li>
           <li>
-            <Link href="/contact">Contacto</Link>
+            <Link href="/contact">{t("contact")}</Link>
           </li>
           <li>
-            <Link href="/projects">Proyectos</Link>
+            <Link href="/projects">{t("projects")}</Link>
           </li>
         </ul>
       )}

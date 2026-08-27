@@ -1,17 +1,21 @@
 import React from "react";
+import { getLocale, getTranslations } from "next-intl/server";
 import ProjectCard from "./ProjectCard";
 import Button from "./Button";
 import { getProjects } from "@/utils/getProjects";
 import { Project } from "@/lib/projectTypes";
+import type { ProjectLocale } from "@/lib/projectTranslations";
 
 const ProjectsSection = async () => {
-  const data = await getProjects();
+  const locale = (await getLocale()) as ProjectLocale;
+  const t = await getTranslations("projects");
+  const data = await getProjects(locale);
 
   return (
     <section className="w-full bg-white dark:bg-violet-950 border-black px-6 pt-6 pb-4 rounded-3xl shadow-md mb-4">
       <div className="flex justify-between">
         <div>
-          <h2 className="text-slate-500 text-sm">Proyectos</h2>
+          <h2 className="text-slate-500 text-sm">{t("title")}</h2>
         </div>
       </div>
       <div className="flex flex-wrap gap-2 mt-4">
@@ -30,10 +34,7 @@ const ProjectsSection = async () => {
             />
           ))}
       </div>
-      <Button
-        href="/projects"
-        text="Ver todos"
-      />
+      <Button href="/projects" text={t("viewAll")} />
     </section>
   );
 };
