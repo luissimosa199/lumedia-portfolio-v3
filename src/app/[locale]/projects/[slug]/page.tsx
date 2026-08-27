@@ -6,7 +6,7 @@ import { getProjectData } from "@/utils/getProjectData";
 import { notFound } from "next/navigation";
 import React from "react";
 import { buildAlternates, type SiteLocale } from "@/lib/alternates";
-import type { ProjectLocale } from "@/lib/projectTranslations";
+import type { ProjectLocale } from "@/lib/projectTypes";
 
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;

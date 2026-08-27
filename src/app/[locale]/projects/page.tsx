@@ -7,7 +7,7 @@ import { getTechStack } from "@/utils/getTechStack";
 import React from "react";
 import { getCategoriesCount } from "@/utils/getCategoriesCount";
 import { buildAlternates, type SiteLocale } from "@/lib/alternates";
-import type { ProjectLocale } from "@/lib/projectTranslations";
+import type { ProjectLocale } from "@/lib/projectTypes";
 
 type PageProps = {
   params: Promise<{ locale: string }>;
