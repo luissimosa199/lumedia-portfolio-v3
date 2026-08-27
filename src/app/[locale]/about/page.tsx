@@ -1,18 +1,45 @@
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import ContactLink from "@/components/ContactLink";
 import TechStack from "@/components/TechStack";
 import { FaGithub, FaLinkedinIn, FaEnvelope } from "react-icons/fa";
 import Image from "next/image";
+import { buildAlternates, type SiteLocale } from "@/lib/alternates";
 
-const About = () => {
+type PageProps = {
+  params: Promise<{ locale: string }>;
+};
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "about" });
+
+  return {
+    title: t("name"),
+    alternates: buildAlternates(locale as SiteLocale, "/about"),
+  };
+}
+
+const About = async ({ params }: PageProps) => {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations();
+
+  const headlineWords = t("about.headline").split(" ");
+  const headlineLastWord = headlineWords.pop();
+  const headlineLead = headlineWords.join(" ");
+
   return (
     <div>
       <section className="w-full bg-white dark:bg-violet-950 border-black p-12 rounded-3xl shadow-md mb-4">
-        <h2 className="text-slate-500 text-sm">Luis Simosa</h2>
+        <h2 className="text-slate-500 text-sm">{t("about.name")}</h2>
         <div className="border-2 rounded-full w-48 h-48 mx-auto mb-4">
           <Image
             src="/lumedia-logo.png"
             className="object-cover"
-            alt="logo"
+            alt={t("common.logoAlt")}
             width={192}
             height={192}
           />
@@ -20,13 +47,12 @@ const About = () => {
         <div className="flex justify-between">
           <div>
             <h3 className="text-4xl font-semibold text-center my-8 dark:text-slate-200">
-              Apasionado por construir herramientas{" "}
-              <span className="underline">útiles.</span>
+              {headlineLead} <span className="underline">{headlineLastWord}</span>
             </h3>
           </div>
         </div>
         <p className=" dark:text-slate-300 text-lg text-center">
-          Desarrollador de software interesado en crear, construir y mejorar.
+          {t("about.description")}
         </p>
       </section>
 
@@ -34,7 +60,7 @@ const About = () => {
         <section className="w-fit bg-white dark:bg-violet-950 border-black p-4 rounded-3xl shadow-md mb-4">
           <div className="flex justify-between mb-2">
             <div>
-              <h2 className="text-slate-500 text-sm">Contactame</h2>
+              <h2 className="text-slate-500 text-sm">{t("about.contact")}</h2>
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -55,7 +81,9 @@ const About = () => {
         <section className="w-full bg-white dark:bg-violet-950 border-black p-4 rounded-3xl shadow-md mb-4">
           <div className="flex justify-between mb-2">
             <div>
-              <h2 className="text-slate-500 text-sm">Familiarizado con:</h2>
+              <h2 className="text-slate-500 text-sm">
+                {t("about.familiarWith")}
+              </h2>
             </div>
           </div>
           <div>

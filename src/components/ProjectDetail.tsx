@@ -2,21 +2,23 @@ import { Project } from "@/lib/projectTypes";
 import Image from "next/image";
 import Link from "next/link";
 import { FunctionComponent } from "react";
+import { getTranslations } from "next-intl/server";
 
 interface ProjectDetailProps extends Omit<Project, "_id"> {}
 
-const ProjectDetail: FunctionComponent<ProjectDetailProps> = ({
+const ProjectDetail: FunctionComponent<ProjectDetailProps> = async ({
   name,
   subtitle,
   image,
   url,
-  slug,
   tags,
   gallery,
+  galleryCaptions,
   repo,
   text,
-  category,
 }) => {
+  const t = await getTranslations();
+
   return (
     <div
       className="h-fit w-full border-b-2 flex flex-col justify-between mt-4 mb-8"
@@ -58,20 +60,14 @@ const ProjectDetail: FunctionComponent<ProjectDetailProps> = ({
         </div>
       </div>
       <div className="text-right flex flex-col my-4">
-        <Link
-          href={repo}
-          className="text-2xl dark:text-white font-semibold"
-        >
-          Visitar repositorio <span className="text-2xl">→</span>
+        <Link href={repo} className="text-2xl dark:text-white font-semibold">
+          {t("projects.visitRepository")} <span className="text-2xl">→</span>
         </Link>
-        <Link
-          href={url}
-          className="text-2xl dark:text-white font-semibold"
-        >
-          Visitar Página <span className="text-2xl">→</span>
+        <Link href={url} className="text-2xl dark:text-white font-semibold">
+          {t("projects.visitPage")} <span className="text-2xl">→</span>
         </Link>
       </div>
-      <h2 className="dark:text-slate-400">Desarrollado con:</h2>
+      <h2 className="dark:text-slate-400">{t("projects.developedWith")}</h2>
       <ul className="flex flex-wrap gap-2 py-4">
         {tags.map((e, idx) => {
           return (
@@ -93,7 +89,7 @@ const ProjectDetail: FunctionComponent<ProjectDetailProps> = ({
               <figure key={idx}>
                 <Image
                   src={e}
-                  alt="foto"
+                  alt={galleryCaptions?.[idx] || t("common.photoAlt")}
                   width={850}
                   height={850}
                   data-testid="gallery-image"

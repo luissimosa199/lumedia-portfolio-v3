@@ -1,10 +1,13 @@
 "use client";
+
 import React, { useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
-import { handleForm } from "./handleForm";
+import { useTranslations } from "next-intl";
+import { handleForm } from "@/app/contact/handleForm";
 
 const SubmitButton = () => {
   const { pending } = useFormStatus();
+  const t = useTranslations("contact");
 
   return (
     <button
@@ -12,30 +15,36 @@ const SubmitButton = () => {
       className="shadow-sm md:w-1/4 md:self-center rounded-full bg-violet-700 py-4 px-8 text-md text-white uppercase lg:hover:scale-105 transition-all active:opacity-75"
       disabled={pending}
     >
-      {pending ? "Enviando..." : "Enviar"}{" "}
-      <span className="text-xl">→</span>
+      {pending ? t("sending") : t("send")} <span className="text-xl">→</span>
     </button>
   );
 };
 
-const Contact = () => {
+const ContactForm = () => {
+  const t = useTranslations("contact");
   const formRef = useRef<HTMLFormElement | null>(null);
-  const [result, setResult] = useState<Awaited<ReturnType<typeof handleForm>> | null>(null);
+  const [result, setResult] = useState<Awaited<
+    ReturnType<typeof handleForm>
+  > | null>(null);
 
   return (
     <section className="w-full bg-white dark:bg-violet-950 border-black p-4 rounded-3xl shadow-md mb-4">
       <div className="flex flex-col justify-between p-4">
         <div>
-          <h2 className="text-slate-500 text-sm">Contacto</h2>
+          <h2 className="text-slate-500 text-sm">{t("title")}</h2>
           <h3 className="text-lg font-semibold my-4 dark:text-slate-200">
-            Puedes contactarme a través de este formulario o enviando un correo
-            a <b>simosa37@gmail.com</b>
+            {t("intro")}
           </h3>
         </div>
         <form
           ref={formRef}
           action={async (formData) => {
-            const response = await handleForm(formData);
+            const response = await handleForm(formData, {
+              messages: {
+                success: t("success"),
+                failure: t("failure"),
+              },
+            });
             setResult(response);
             if (response) {
               if (response.ok) {
@@ -48,19 +57,19 @@ const Contact = () => {
           <input
             type="text"
             name="name"
-            placeholder="Tu nombre"
+            placeholder={t("namePlaceholder")}
             className="rounded-lg border p-4 w-full bg-slate-100"
           />
           <input
             type="email"
             name="email"
-            placeholder="Tu email"
+            placeholder={t("emailPlaceholder")}
             className="rounded-lg border p-4 w-full bg-slate-100"
           />
           <textarea
             rows={5}
             name="message"
-            placeholder="Tu mensaje"
+            placeholder={t("messagePlaceholder")}
             className="rounded-lg border p-4 w-full bg-slate-100"
           />
           <SubmitButton />
@@ -75,4 +84,4 @@ const Contact = () => {
   );
 };
 
-export default Contact;
+export default ContactForm;

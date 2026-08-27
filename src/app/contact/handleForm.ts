@@ -7,9 +7,15 @@ import {
 } from "@/lib/contactService";
 import type { ContactRepository } from "@/lib/contactRepository";
 
+export interface HandleFormMessages {
+  success?: string;
+  failure?: string;
+}
+
 export interface HandleFormDependencies {
   repository?: ContactRepository;
   emailSender?: ContactEmailSender;
+  messages?: HandleFormMessages;
 }
 
 export interface ContactFormResult {
@@ -17,8 +23,8 @@ export interface ContactFormResult {
   message: string;
 }
 
-const successMessage = "Mensaje enviado correctamente.";
-const failureMessage = "No se pudo enviar el mensaje. Inténtalo de nuevo.";
+const defaultSuccessMessage = "Mensaje enviado correctamente.";
+const defaultFailureMessage = "No se pudo enviar el mensaje. Inténtalo de nuevo.";
 
 function getText(formData: FormData, field: string) {
   const value = formData.get(field);
@@ -29,6 +35,9 @@ export const handleForm = async (
   formData: FormData,
   dependencies?: HandleFormDependencies
 ): Promise<ContactFormResult> => {
+  const successMessage = dependencies?.messages?.success ?? defaultSuccessMessage;
+  const failureMessage = dependencies?.messages?.failure ?? defaultFailureMessage;
+
   const contact: ContactInput = {
     name: getText(formData, "name"),
     email: getText(formData, "email"),
