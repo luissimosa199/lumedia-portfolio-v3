@@ -3,6 +3,7 @@ import NavButton from "./NavButton";
 import DarkModeToggle from "./DarkModeToggle";
 import NavLogo from "./NavLogo";
 import NavLinks from "./NavLinks";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const Navbar = () => {
   return (
@@ -10,7 +11,10 @@ const Navbar = () => {
       <NavButton />
       <NavLinks />
       <NavLogo />
-      <DarkModeToggle />
+      <div className="flex items-center gap-3">
+        <LanguageSwitcher />
+        <DarkModeToggle />
+      </div>
     </nav>
   );
 };

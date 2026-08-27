@@ -1,22 +1,39 @@
+import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import ProjectDetail from "@/components/ProjectDetail";
 import { Project } from "@/lib/projectTypes";
 import { getProjectData } from "@/utils/getProjectData";
 import { notFound } from "next/navigation";
 import React from "react";
+import { buildAlternates, type SiteLocale } from "@/lib/alternates";
+import type { ProjectLocale } from "@/lib/projectTranslations";
 
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 
-const Page = async ({
-  params,
-}: {
+type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
-}) => {
+};
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const response = await getProjectData(slug, locale as ProjectLocale);
+  const data = JSON.parse(response) as Project | null;
+
+  return {
+    title: data?.name,
+    description: data?.subtitle,
+    alternates: buildAlternates(locale as SiteLocale, `/projects/${slug}`),
+  };
+}
+
+const Page = async ({ params }: PageProps) => {
   const { locale, slug: projectSlug } = await params;
   setRequestLocale(locale);
 
-  const response = await getProjectData(projectSlug);
+  const response = await getProjectData(projectSlug, locale as ProjectLocale);
 
   const data = JSON.parse(response) as Project | null;
 
@@ -35,6 +52,7 @@ const Page = async ({
     category,
     repo,
     gallery,
+    galleryCaptions,
   } = data;
 
   return (
@@ -50,6 +68,7 @@ const Page = async ({
         category={category}
         repo={repo}
         gallery={gallery}
+        galleryCaptions={galleryCaptions}
       />
     </section>
   );

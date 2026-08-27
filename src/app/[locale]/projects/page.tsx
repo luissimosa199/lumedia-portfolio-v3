@@ -1,20 +1,35 @@
-import { setRequestLocale } from "next-intl/server";
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import ProjectList from "@/components/ProjectList";
 import { getProjects } from "@/utils/getProjects";
 import { getCategories } from "@/utils/getCategories";
 import { getTechStack } from "@/utils/getTechStack";
 import React from "react";
 import { getCategoriesCount } from "@/utils/getCategoriesCount";
+import { buildAlternates, type SiteLocale } from "@/lib/alternates";
+import type { ProjectLocale } from "@/lib/projectTranslations";
 
-const Projects = async ({
-  params,
-}: {
+type PageProps = {
   params: Promise<{ locale: string }>;
-}) => {
+};
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "projects" });
+
+  return {
+    title: t("title"),
+    alternates: buildAlternates(locale as SiteLocale, "/projects"),
+  };
+}
+
+const Projects = async ({ params }: PageProps) => {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const data = await getProjects();
+  const data = await getProjects(locale as ProjectLocale);
   const categories = await getCategories();
   const categoriesCount = await getCategoriesCount();
   const techStack = JSON.parse(await getTechStack()) as string[];
