@@ -1,44 +1,63 @@
+// Verifies that every translatable piece of project content has a row
+// for BOTH locales directly in Postgres.
+//
+// Before the project_translations / project_image_translations tables
+// (see migrations/0001_create_project_translations.sql), this script
+// checked that the next-intl catalogs (src/i18n/messages/{es,en}.json)
+// covered every project slug in the database. Now that the catalogs no
+// longer carry project content at all - only UI chrome - the equivalent
+// check is entirely DB-internal: every `projects` row must have an "es"
+// and an "en" row in project_translations, and every `project_images`
+// row must have an "es" and an "en" row in project_image_translations.
 import assert from "node:assert/strict";
 import { Pool } from "pg";
-import {
-  projectTranslations,
-} from "../src/lib/projectTranslations.ts";
 
 const databaseUrl = process.env.DB_URL ?? process.env.DEV_DATABASE_URL;
 assert.ok(databaseUrl, "DB_URL or DEV_DATABASE_URL must be set");
 
 const pool = new Pool({ connectionString: databaseUrl });
+const expectedLocales = ["es", "en"];
 
 try {
   const projects = await pool.query(`
-    SELECT slug, name, subtitle, body, category, cover_url, live_url, repo_url, tags
-    FROM projects
-    ORDER BY display_order ASC NULLS LAST, created_at ASC, id ASC
+    SELECT id, slug FROM projects ORDER BY slug ASC
+  `);
+  const translations = await pool.query(`
+    SELECT project_id, locale, name, subtitle, body FROM project_translations
   `);
   const images = await pool.query(`
-    SELECT projects.slug, project_images.idx, project_images.caption
-    FROM projects
-    JOIN project_images ON project_images.project_id = projects.id
-    WHERE project_images.caption IS NOT NULL
-    ORDER BY projects.slug ASC, project_images.idx ASC
+    SELECT project_id, idx FROM project_images ORDER BY project_id, idx ASC
+  `);
+  const imageTranslations = await pool.query(`
+    SELECT project_id, idx, locale, caption FROM project_image_translations
   `);
 
-  const slugs = projects.rows.map(({ slug }) => slug);
-  const expectedLocales = ["es", "en"];
+  const translationsByProject = new Map();
+  for (const row of translations.rows) {
+    const byLocale = translationsByProject.get(row.project_id) ?? new Map();
+    byLocale.set(row.locale, row);
+    translationsByProject.set(row.project_id, byLocale);
+  }
 
-  for (const locale of expectedLocales) {
-    const catalog = projectTranslations[locale];
-    assert.ok(catalog, `missing project translation locale: ${locale}`);
-    assert.deepEqual(
-      Object.keys(catalog).sort(),
-      [...slugs].sort(),
-      `${locale} project translations must match database slugs`
-    );
+  const imageTranslationsByImage = new Map();
+  for (const row of imageTranslations.rows) {
+    const key = `${row.project_id}:${row.idx}`;
+    const byLocale = imageTranslationsByImage.get(key) ?? new Map();
+    byLocale.set(row.locale, row);
+    imageTranslationsByImage.set(key, byLocale);
+  }
 
-    for (const project of projects.rows) {
-      const translation = catalog[project.slug];
-      assert.ok(translation, `missing ${locale} translation for ${project.slug}`);
-      for (const field of ["name", "subtitle", "text"]) {
+  for (const project of projects.rows) {
+    const byLocale = translationsByProject.get(project.id);
+    assert.ok(byLocale, `project ${project.slug} has no project_translations rows`);
+
+    for (const locale of expectedLocales) {
+      const translation = byLocale.get(locale);
+      assert.ok(
+        translation,
+        `missing ${locale} project_translations row for ${project.slug}`
+      );
+      for (const field of ["name", "subtitle", "body"]) {
         assert.equal(
           typeof translation[field],
           "string",
@@ -52,31 +71,30 @@ try {
     }
   }
 
-  const captionsBySlug = new Map();
   for (const image of images.rows) {
-    const captions = captionsBySlug.get(image.slug) ?? [];
-    captions.push(image);
-    captionsBySlug.set(image.slug, captions);
-  }
+    const key = `${image.project_id}:${image.idx}`;
+    const byLocale = imageTranslationsByImage.get(key);
+    assert.ok(
+      byLocale,
+      `project_images row ${key} has no project_image_translations rows`
+    );
 
-  for (const locale of expectedLocales) {
-    for (const [slug, imagesForProject] of captionsBySlug) {
-      const captions = projectTranslations[locale][slug].galleryCaptions;
+    for (const locale of expectedLocales) {
+      const translation = byLocale.get(locale);
       assert.ok(
-        Array.isArray(captions),
-        `${locale}.${slug}.galleryCaptions must be an array`
+        translation,
+        `missing ${locale} project_image_translations row for ${key}`
       );
-      for (const image of imagesForProject) {
-        assert.ok(
-          Object.prototype.hasOwnProperty.call(captions, image.idx),
-          `missing ${locale}.${slug} gallery caption ${image.idx}`
-        );
-      }
+      assert.equal(
+        typeof translation.caption,
+        "string",
+        `${locale} caption for ${key} must be a string`
+      );
     }
   }
 
   console.log(
-    `Locale coverage passed (${projects.rows.length} projects, ${images.rows.length} non-null gallery captions, ${expectedLocales.length} locales).`
+    `Locale coverage passed (${projects.rows.length} projects, ${images.rows.length} gallery images, ${expectedLocales.length} locales).`
   );
 } finally {
   await pool.end();

@@ -54,43 +54,5 @@
   },
   "footer": {
     "copyright": "Luis Simosa, 2023"
-  },
-  "projectContent": {
-    "ticker-scanner": {
-      "name": "Ticker Scanner",
-      "subtitle": "NestJS REST API with 52% test coverage, Cencosud invoice scraping, and a paperless future in mind.",
-      "text": "Ticker Scanner is my personal Next.js project, with solid 52% test coverage, focused on scraping invoices from Cencosud supermarkets (Día, Jumbo, Vea, Easy). Its long-term vision is to pave the way toward a paperless future where transaction information is managed efficiently and sustainably. With secure authentication and a MongoDB database, this backend provides a practical solution for organizing and analyzing invoice data while moving toward a greener, more efficient paperless experience.",
-      "galleryCaptions": []
-    },
-    "lumedia-blog": {
-      "name": "Lumedia Blog",
-      "subtitle": "A simple, elegant blog with useful notes about Next.js, Nginx, and Docker to simplify everyday processes.",
-      "text": "Welcome to my practical blog, where you will find straightforward tips about Next.js, Nginx, and Docker. No unnecessary detours, just useful information to simplify your processes. Explore and simplify!",
-      "galleryCaptions": ["", ""]
-    },
-    "portafolio": {
-      "name": "Portfolio",
-      "subtitle": "Minimalist portfolio with a dual design, dark and light themes, and appealing icons.",
-      "text": "Discover my minimalist portfolio with a dual design that adapts to your preferences, whether you choose a dark or light theme. Explore easily and find relevant information about my projects and skills. The appealing icons add a special touch, making the experience both visually pleasant and informative. Welcome to my space!",
-      "galleryCaptions": ["", "", "", ""]
-    },
-    "gbooks": {
-      "name": "Gbooks",
-      "subtitle": "GBooks: a search engine for historical, public-domain books using the Google Books API.",
-      "text": "GBooks is my personal project dedicated to simplifying the search for and download of historical books and public-domain documents. Using the Google Books API, this search engine offers an easy and quick way to access valuable works from the past. Explore history and culture through this tool, designed to make yesterday's wisdom easier to reach. Discover and download knowledge without restrictions!",
-      "galleryCaptions": ["", "", "", ""]
-    },
-    "ticker-scanner-web": {
-      "name": "Ticker Scanner WEB",
-      "subtitle": "Web application for analyzing and storing your supermarket invoice information.",
-      "text": "Ticker Scanner is built with Next.js 14. Its main feature is scanning the QR code on supermarket purchase invoices to extract and analyze details such as products, prices, and totals. Users can register and, after scanning an invoice, save it in the database linked to their account. This creates a personalized purchase history for tracking spending and consumption habits. The app is optimized for mobile use, taking advantage of the camera to capture QR codes and display information quickly and conveniently. In short, Ticker Scanner digitizes and analyzes purchase invoices for a more efficient, informed experience.",
-      "galleryCaptions": ["", "", "", ""]
-    },
-    "ns-cli-runner": {
-      "name": "NetSuite CLI Runner",
-      "subtitle": "A command-line interface (CLI) tool for executing ad-hoc SuiteScript 2.1 code directly against NetSuite accounts.",
-      "text": "This project provides a CLI alternative to the NetSuite Instant Runner VS Code extension. It allows developers to execute SuiteScript code from the command line, get structured results, and retrieve execution logs - perfect for automation, testing, and AI agent integration.",
-      "galleryCaptions": []
-    }
   }
 }

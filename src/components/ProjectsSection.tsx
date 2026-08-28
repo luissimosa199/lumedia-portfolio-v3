@@ -3,8 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import ProjectCard from "./ProjectCard";
 import Button from "./Button";
 import { getProjects } from "@/utils/getProjects";
-import { Project } from "@/lib/projectTypes";
-import type { ProjectLocale } from "@/lib/projectTranslations";
+import { Project, type ProjectLocale } from "@/lib/projectTypes";
 
 const ProjectsSection = async () => {
   const locale = (await getLocale()) as ProjectLocale;
