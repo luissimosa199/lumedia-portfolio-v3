@@ -45,7 +45,7 @@ Setup:
 
    ```bash
    npm run admin:hash-password
-   # -> ADMIN_PASSWORD_HASH=scrypt$...
+   # -> ADMIN_PASSWORD_HASH=scrypt.v1....
    ```
 
    `ADMIN_PASSWORD` (plain text) also works for local development.
@@ -58,6 +58,19 @@ Setup:
 See `.env.example` for the full list of variables. `/admin` is never
 localized or indexed, and every request to it (pages, server actions and the
 upload API) is checked against the signed, HttpOnly session cookie.
+
+## Runtime logs
+
+Server-side events are emitted as one-line JSON through `console.info`,
+`console.warn`, and `console.error`. Vercel captures these automatically in
+the deployment's runtime logs; local development prints the same entries in
+the terminal.
+
+Useful admin events include `admin.login.attempt`, `admin.login.rejected`,
+`admin.login.success`, `admin.login.verification_error`, and
+`admin.login.session_error`. Login diagnostics include only the credential
+source and whether the hash has the expected format. Passwords, hashes,
+cookies, and form bodies are never logged.
 
 ## Learn More
 

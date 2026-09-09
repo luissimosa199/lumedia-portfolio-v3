@@ -2,6 +2,9 @@
 const createNextIntlPlugin = require("next-intl/plugin");
 
 const nextConfig = {
+  turbopack: {
+    root: __dirname,
+  },
   images: {
     remotePatterns: [
       {

@@ -4,8 +4,10 @@
 //   npm run admin:hash-password                (prompts, input hidden)
 //   npm run admin:hash-password -- "secret"    (from the command line)
 //
-// Output format: scrypt$<salt hex>$<hash hex>, using scrypt N=16384, r=8,
-// p=1 and a 64-byte key - must stay in sync with src/lib/adminAuth.ts.
+// Output format: scrypt.v1.<salt base64url>.<hash base64url>, using scrypt
+// N=16384, r=8, p=1 and a 64-byte key - must stay in sync with
+// src/lib/adminAuth.ts. The dot/base64url format is safe in dotenv files and
+// shell environments because it contains no `$` expansion characters.
 
 import { randomBytes, scryptSync } from "node:crypto";
 import { stdin, stdout } from "node:process";
@@ -14,7 +16,7 @@ import readline from "node:readline";
 function hashPassword(password) {
   const salt = randomBytes(16);
   const derived = scryptSync(password, salt, 64, { N: 16384, r: 8, p: 1 });
-  return `scrypt$${salt.toString("hex")}$${derived.toString("hex")}`;
+  return `scrypt.v1.${salt.toString("base64url")}.${derived.toString("base64url")}`;
 }
 
 function promptHidden(question) {

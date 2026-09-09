@@ -1,16 +1,18 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
   ADMIN_HOME_PATH,
   ADMIN_LOGIN_PATH,
   endAdminSession,
-  isAdminConfigured,
+  getAdminCredentialDiagnostics,
   requireAdmin,
   startAdminSession,
   verifyAdminPassword,
 } from "@/lib/adminAuth";
+import { logger, serializeError } from "@/lib/logger";
 import {
   createProject,
   deleteProject,
@@ -29,16 +31,63 @@ export async function loginAction(
   _previous: LoginState,
   formData: FormData
 ): Promise<LoginState> {
-  if (!isAdminConfigured()) {
+  const attemptId = randomUUID();
+  const credential = getAdminCredentialDiagnostics();
+  logger.info("admin.login.attempt", {
+    attempt_id: attemptId,
+    configured: credential.configured,
+    credential_source: credential.source,
+    hash_format_valid: credential.hashFormatValid,
+    hash_length: credential.hashLength,
+  });
+
+  if (!credential.configured) {
+    logger.warn("admin.login.rejected", {
+      attempt_id: attemptId,
+      reason: "not_configured",
+    });
     return { error: "Admin login is not configured on this server." };
   }
 
   const password = formData.get("password");
-  if (typeof password !== "string" || !(await verifyAdminPassword(password))) {
+  if (typeof password !== "string") {
+    logger.warn("admin.login.rejected", {
+      attempt_id: attemptId,
+      reason: "missing_password",
+    });
     return { error: "Wrong password." };
   }
 
-  await startAdminSession();
+  let valid = false;
+  try {
+    valid = await verifyAdminPassword(password);
+  } catch (error) {
+    logger.error("admin.login.verification_error", {
+      attempt_id: attemptId,
+      error: serializeError(error),
+    });
+    return { error: "Admin login is temporarily unavailable." };
+  }
+
+  if (!valid) {
+    logger.warn("admin.login.rejected", {
+      attempt_id: attemptId,
+      reason: "invalid_password",
+    });
+    return { error: "Wrong password." };
+  }
+
+  try {
+    await startAdminSession();
+  } catch (error) {
+    logger.error("admin.login.session_error", {
+      attempt_id: attemptId,
+      error: serializeError(error),
+    });
+    return { error: "Admin login is temporarily unavailable." };
+  }
+
+  logger.info("admin.login.success", { attempt_id: attemptId });
   redirect(ADMIN_HOME_PATH);
 }
 
@@ -89,7 +138,11 @@ export async function saveProjectAction(
       await createProject(input);
     }
   } catch (error) {
-    console.error("saveProjectAction failed", error);
+    logger.error("admin.project.save_error", {
+      project_id: id,
+      slug: input.slug,
+      error: serializeError(error),
+    });
     return {
       error:
         error instanceof Error
@@ -104,7 +157,16 @@ export async function saveProjectAction(
 
 export async function deleteProjectAction(id: string): Promise<void> {
   await requireAdmin();
-  await deleteProject(id);
+  try {
+    await deleteProject(id);
+    logger.info("admin.project.deleted", { project_id: id });
+  } catch (error) {
+    logger.error("admin.project.delete_error", {
+      project_id: id,
+      error: serializeError(error),
+    });
+    throw error;
+  }
   revalidateSite();
   redirect(`${ADMIN_HOME_PATH}?deleted=1`);
 }
@@ -114,6 +176,16 @@ export async function moveProjectAction(
   direction: "up" | "down"
 ): Promise<void> {
   await requireAdmin();
-  await moveProject(id, direction);
+  try {
+    await moveProject(id, direction);
+    logger.info("admin.project.reordered", { project_id: id, direction });
+  } catch (error) {
+    logger.error("admin.project.reorder_error", {
+      project_id: id,
+      direction,
+      error: serializeError(error),
+    });
+    throw error;
+  }
   revalidateSite();
 }

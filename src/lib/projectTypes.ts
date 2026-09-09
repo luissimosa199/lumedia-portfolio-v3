@@ -1,4 +1,6 @@
+import type { QueryResult } from "pg";
 import { getPostgresPool } from "@/lib/postgresPool";
+import { logger, serializeError } from "@/lib/logger";
 
 export type ProjectLocale = "es" | "en";
 
@@ -85,29 +87,49 @@ export async function loadProjects(
       ? "ORDER BY p.display_order ASC NULLS LAST, p.created_at ASC, p.id ASC"
       : "";
 
-  const projects = await pool.query<PostgresProjectRow>(
-    `SELECT ${projectColumns}
-     FROM projects p
-     JOIN project_translations t ON t.project_id = p.id AND t.locale = $1
-     ${whereClause}
-     ${orderClause}`,
-    values
-  );
+  let projects: QueryResult<PostgresProjectRow>;
+  try {
+    projects = await pool.query<PostgresProjectRow>(
+      `SELECT ${projectColumns}
+       FROM projects p
+       JOIN project_translations t ON t.project_id = p.id AND t.locale = $1
+       ${whereClause}
+       ${orderClause}`,
+      values
+    );
+  } catch (error) {
+    logger.error("projects.load_error", {
+      locale,
+      slug: slug ?? null,
+      error: serializeError(error),
+    });
+    throw error;
+  }
 
   if (projects.rows.length === 0) {
     return [];
   }
 
   const projectIds = projects.rows.map((project) => project.id);
-  const images = await pool.query<PostgresProjectImageRow>(
-    `SELECT pi.project_id, pi.idx, pi.url, it.caption
-     FROM project_images pi
-     JOIN project_image_translations it
-       ON it.project_id = pi.project_id AND it.idx = pi.idx AND it.locale = $1
-     WHERE pi.project_id = ANY($2::uuid[])
-     ORDER BY pi.project_id, pi.idx ASC`,
-    [locale, projectIds]
-  );
+  let images: QueryResult<PostgresProjectImageRow>;
+  try {
+    images = await pool.query<PostgresProjectImageRow>(
+      `SELECT pi.project_id, pi.idx, pi.url, it.caption
+       FROM project_images pi
+       JOIN project_image_translations it
+         ON it.project_id = pi.project_id AND it.idx = pi.idx AND it.locale = $1
+       WHERE pi.project_id = ANY($2::uuid[])
+       ORDER BY pi.project_id, pi.idx ASC`,
+      [locale, projectIds]
+    );
+  } catch (error) {
+    logger.error("project_images.load_error", {
+      locale,
+      project_count: projectIds.length,
+      error: serializeError(error),
+    });
+    throw error;
+  }
 
   const galleryByProject = new Map<string, PostgresProjectImageRow[]>();
   for (const image of images.rows) {
