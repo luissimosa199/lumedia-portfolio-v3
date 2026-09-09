@@ -45,6 +45,12 @@ export async function loginAction(
     logger.warn("admin.login.rejected", {
       attempt_id: attemptId,
       reason: "not_configured",
+      credential_source: credential.source,
+      hash_format_valid: credential.hashFormatValid,
+      hash_length: credential.hashLength,
+      deployment_commit: process.env.VERCEL_GIT_COMMIT_SHA ?? null,
+      vercel_environment: process.env.VERCEL_ENV ?? null,
+      node_version: process.version,
     });
     return { error: "Admin login is not configured on this server." };
   }
@@ -54,6 +60,12 @@ export async function loginAction(
     logger.warn("admin.login.rejected", {
       attempt_id: attemptId,
       reason: "missing_password",
+      credential_source: credential.source,
+      hash_format_valid: credential.hashFormatValid,
+      hash_length: credential.hashLength,
+      deployment_commit: process.env.VERCEL_GIT_COMMIT_SHA ?? null,
+      vercel_environment: process.env.VERCEL_ENV ?? null,
+      node_version: process.version,
     });
     return { error: "Wrong password." };
   }
@@ -73,6 +85,13 @@ export async function loginAction(
     logger.warn("admin.login.rejected", {
       attempt_id: attemptId,
       reason: "invalid_password",
+      credential_source: credential.source,
+      hash_format_valid: credential.hashFormatValid,
+      hash_length: credential.hashLength,
+      password_length: password.length,
+      deployment_commit: process.env.VERCEL_GIT_COMMIT_SHA ?? null,
+      vercel_environment: process.env.VERCEL_ENV ?? null,
+      node_version: process.version,
     });
     return { error: "Wrong password." };
   }
