@@ -13,7 +13,7 @@
     "admin:hash-password": "node scripts/hash-admin-password.mjs"
   },
   "engines": {
-    "node": ">=24.0.0"
+    "node": "24.x"
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.454.0",
