@@ -20,6 +20,45 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
+## Database migrations
+
+Project content lives in Postgres. Apply pending migrations (idempotent) with:
+
+```bash
+DB_URL=postgres://... npm run db:migrate
+```
+
+## Admin panel
+
+A small built-in CMS lives at [`/admin`](http://localhost:3000/admin). It lets you create,
+edit, reorder and delete projects, with every text field editable in both
+Spanish and English, plus the cover image and the gallery (captions per
+language). Images can be uploaded straight to Cloudinary from the form or
+pasted as existing `res.cloudinary.com` URLs. Saving a project revalidates the
+public pages immediately.
+
+Setup:
+
+1. Run the migrations (`npm run db:migrate`) - `0003_admin_panel.sql` adds the
+   defaults/unique indexes the panel relies on.
+2. Generate the password hash and put it in the environment:
+
+   ```bash
+   npm run admin:hash-password
+   # -> ADMIN_PASSWORD_HASH=scrypt$...
+   ```
+
+   `ADMIN_PASSWORD` (plain text) also works for local development.
+   Optionally set `ADMIN_SESSION_SECRET`; otherwise the session cookie is
+   signed with a key derived from the password hash.
+3. For uploads, set `CLOUDINARY_URL` (or `CLOUDINARY_CLOUD_NAME`,
+   `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`). Without it the form still
+   works with pasted URLs.
+
+See `.env.example` for the full list of variables. `/admin` is never
+localized or indexed, and every request to it (pages, server actions and the
+upload API) is checked against the signed, HttpOnly session cookie.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
