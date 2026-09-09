@@ -3,9 +3,17 @@ import { getRequestConfig } from "next-intl/server";
 import { routing } from "./routing";
 
 export default getRequestConfig(async ({ requestLocale }) => {
-  const locale = await requestLocale;
+  const requested = await requestLocale;
 
-  if (!locale || !routing.locales.includes(locale as (typeof routing.locales)[number])) {
+  // Routes that live outside the `[locale]` segment (the /admin panel) are
+  // never touched by the next-intl middleware, so they arrive here without a
+  // locale. They still render under the shared root layout (which calls
+  // getLocale() for <html lang>), so fall back to the default locale instead
+  // of 404ing. Anything that IS under `[locale]` is validated again by
+  // src/app/[locale]/layout.tsx, so an unknown prefix still 404s there.
+  const locale = requested ?? routing.defaultLocale;
+
+  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
     notFound();
   }
 

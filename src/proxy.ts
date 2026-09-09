@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
+import {
+  ADMIN_SESSION_COOKIE,
+  verifyAdminSessionToken,
+} from "./lib/adminSession";
 
 const intlMiddleware = createMiddleware(routing);
+
+type SiteLocale = (typeof routing.locales)[number];
 
 /**
  * `routing.localeDetection` is deliberately `false` so next-intl never
@@ -12,14 +18,21 @@ const intlMiddleware = createMiddleware(routing);
  * visitors, so it is handled explicitly here, once, only for unprefixed
  * paths with no `NEXT_LOCALE` cookie yet, before delegating to next-intl.
  *
- * The cookie gate matters: next-intl's `Link` forces an explicit `/es/...`
- * hop when switching locale (even though es is normally unprefixed), which
- * itself redirects down to the canonical unprefixed URL. Without the gate,
- * that second, unprefixed hop would re-trigger this same accept-language
- * redirect and bounce an english-preferring visitor straight back to /en
- * every time they tried to switch to Spanish.
+ * The cookie gate is what makes "once" true, so this proxy owns the cookie
+ * instead of relying on next-intl to write it. next-intl only sets
+ * `NEXT_LOCALE` when the resolved locale differs from what `accept-language`
+ * would have picked - so for an english-preferring browser, visiting /en
+ * never set a cookie, and clicking the "ES" switcher (which targets the
+ * unprefixed URL) re-triggered this same redirect and bounced the visitor
+ * straight back to /en. The switcher label therefore never changed. Every
+ * document response now records the locale of the URL it was served for.
  */
 const LOCALE_COOKIE_NAME = "NEXT_LOCALE";
+const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+
+const ADMIN_PREFIX = "/admin";
+const ADMIN_LOGIN_PATH = "/admin/login";
+
 function negotiateLocale(
   acceptLanguage: string,
   locales: readonly string[]
@@ -45,15 +58,78 @@ function negotiateLocale(
   return undefined;
 }
 
-export default function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const hasLocalePrefix = routing.locales.some(
+function getLocaleFromPathname(pathname: string): SiteLocale | undefined {
+  return routing.locales.find(
     (locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
   );
+}
 
+/** Only real page navigations should touch the locale cookie (mirrors next-intl). */
+function isDocumentRequest(request: NextRequest): boolean {
+  const destination = request.headers.get("sec-fetch-dest");
+  return destination === null || destination === "document";
+}
+
+function rememberLocale(
+  request: NextRequest,
+  response: NextResponse,
+  locale: SiteLocale
+) {
+  if (!isDocumentRequest(request)) return;
+  if (request.cookies.get(LOCALE_COOKIE_NAME)?.value === locale) return;
+  // next-intl may already have written the same cookie on this response.
+  if (response.cookies.get(LOCALE_COOKIE_NAME)?.value === locale) return;
+
+  response.cookies.set(LOCALE_COOKIE_NAME, locale, {
+    path: "/",
+    sameSite: "lax",
+    maxAge: LOCALE_COOKIE_MAX_AGE,
+  });
+}
+
+/**
+ * /admin lives outside the `[locale]` segment and is never localized, so it
+ * bypasses next-intl entirely. Everything except the login page requires a
+ * valid session cookie; the pages/actions re-check it too (src/lib/adminAuth.ts),
+ * this is just the first line of defense.
+ */
+async function handleAdmin(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const isAuthenticated = await verifyAdminSessionToken(
+    request.cookies.get(ADMIN_SESSION_COOKIE)?.value
+  );
+
+  if (pathname === ADMIN_LOGIN_PATH) {
+    if (isAuthenticated) {
+      const url = request.nextUrl.clone();
+      url.pathname = ADMIN_PREFIX;
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
+
+  if (!isAuthenticated) {
+    const url = request.nextUrl.clone();
+    url.pathname = ADMIN_LOGIN_PATH;
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+
+  return NextResponse.next();
+}
+
+export default async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  if (pathname === ADMIN_PREFIX || pathname.startsWith(`${ADMIN_PREFIX}/`)) {
+    return handleAdmin(request);
+  }
+
+  const prefixLocale = getLocaleFromPathname(pathname);
   const hasLocaleCookie = request.cookies.has(LOCALE_COOKIE_NAME);
 
-  if (!hasLocalePrefix && !hasLocaleCookie) {
+  if (!prefixLocale && !hasLocaleCookie) {
     const acceptLanguage = request.headers.get("accept-language");
     const preferred = acceptLanguage
       ? negotiateLocale(acceptLanguage, routing.locales)
@@ -62,11 +138,15 @@ export default function proxy(request: NextRequest) {
     if (preferred && preferred !== routing.defaultLocale) {
       const url = request.nextUrl.clone();
       url.pathname = `/${preferred}${pathname === "/" ? "" : pathname}`;
-      return NextResponse.redirect(url);
+      const response = NextResponse.redirect(url);
+      rememberLocale(request, response, preferred as SiteLocale);
+      return response;
     }
   }
 
-  return intlMiddleware(request);
+  const response = intlMiddleware(request);
+  rememberLocale(request, response, prefixLocale ?? routing.defaultLocale);
+  return response;
 }
 
 export const config = {
