@@ -28,6 +28,29 @@ Project content lives in Postgres. Apply pending migrations (idempotent) with:
 DB_URL=postgres://... npm run db:migrate
 ```
 
+## Tests
+
+The integration suite uses a real, disposable PostgreSQL database. PostgreSQL
+17 is used in CI; current supported PostgreSQL releases should work locally.
+Create a dedicated database whose name explicitly contains `test`, then run:
+
+```bash
+TEST_DATABASE_URL=postgres://user:password@localhost:5432/portfolio_test npm test
+```
+
+The test harness refuses to use `DB_URL` or `DEV_DATABASE_URL`, rebuilds the
+test tables, applies the committed migrations, and loads deterministic fixture
+rows. Never point `TEST_DATABASE_URL` at development or production data. SES is
+replaced only at its client boundary, so the suite never sends live email.
+
+For the complete CI-equivalent verification, follow the tests with:
+
+```bash
+npm run check:locale-config
+npm run check:locale-coverage
+DB_URL="$TEST_DATABASE_URL" npm run build
+```
+
 ## Admin panel
 
 A small built-in CMS lives at [`/admin`](http://localhost:3000/admin). It lets you create,

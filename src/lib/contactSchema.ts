@@ -13,11 +13,18 @@ export interface ContactRow extends ContactInput {
   updated_at: Date;
 }
 
-export function isContactInput(value: ContactInput): boolean {
+export function isContactInput(value: unknown): value is ContactInput {
+  if (typeof value !== "object" || value === null) return false;
+
+  const candidate = value as Record<string, unknown>;
   return (
-    value.name.trim().length > 0 &&
-    value.email.trim().length > 0 &&
-    value.message.trim().length > 0 &&
-    value.origin.trim().length > 0
+    typeof candidate.name === "string" &&
+    candidate.name.trim().length > 0 &&
+    typeof candidate.email === "string" &&
+    candidate.email.trim().length > 0 &&
+    typeof candidate.message === "string" &&
+    candidate.message.trim().length > 0 &&
+    typeof candidate.origin === "string" &&
+    candidate.origin.trim().length > 0
   );
 }

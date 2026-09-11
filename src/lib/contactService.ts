@@ -80,7 +80,7 @@ export function createContactService({
   return {
     async submit(contact: ContactInput) {
       const savedContact = await repository.insertContact(contact);
-      await emailSender.send(contact);
+      await emailSender.send(savedContact);
       return savedContact;
     },
   };
