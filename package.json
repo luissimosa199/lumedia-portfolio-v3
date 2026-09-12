@@ -5,12 +5,15 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "typecheck": "tsc --noEmit --incremental false",
     "start": "next start",
     "lint": "eslint . --cache",
     "db:migrate": "node migrations/apply.mjs",
     "check:locale-config": "node scripts/check-locale-config.mjs",
     "check:locale-coverage": "tsx scripts/check-locale-coverage.mjs",
-    "admin:hash-password": "node scripts/hash-admin-password.mjs"
+    "admin:hash-password": "node scripts/hash-admin-password.mjs",
+    "test": "node scripts/run-tests.mjs",
+    "test:watch": "node scripts/run-tests.mjs --watch"
   },
   "engines": {
     "node": "24.x"
@@ -36,6 +39,7 @@
     "postcss": "^8",
     "tailwindcss": "^3",
     "tsx": "^4.20.6",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.7"
   }
 }
