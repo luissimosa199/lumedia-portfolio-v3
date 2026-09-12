@@ -2,10 +2,10 @@ import {readFile, readdir} from "node:fs/promises";
 import {resolve} from "node:path";
 import {Pool} from "pg";
 import {seedProjects} from "./fixtures";
+import {getTestDatabaseUrl} from "../../scripts/test-database-env.mjs";
 
 export default async function setup() {
-  if (!process.env.DB_URL) throw new Error("DB_URL was not configured by the test launcher");
-  const pool = new Pool({connectionString: process.env.DB_URL});
+  const pool = new Pool({connectionString: getTestDatabaseUrl()});
   try {
     await pool.query(`
       DROP TABLE IF EXISTS project_image_translations, project_translations,

@@ -1,20 +1,13 @@
 import {spawn} from "node:child_process";
+import {getTestDatabaseUrl} from "./test-database-env.mjs";
 
-const names = ["TEST_DATABASE_URL", "DATABASE_URL", "DB_URL"];
-const configured = names.filter((name) => process.env[name]);
-
-if (configured.length === 0) {
-  console.error(`Missing test database configuration: set one of ${names.join(", ")}.`);
+let databaseUrl;
+try {
+  databaseUrl = getTestDatabaseUrl();
+} catch (error) {
+  console.error(error instanceof Error ? error.message : String(error));
   process.exit(1);
 }
-
-const values = new Set(configured.map((name) => process.env[name]));
-if (values.size !== 1) {
-  console.error(`Conflicting test database configuration: ${configured.join(", ")} must identify the same database.`);
-  process.exit(1);
-}
-
-const databaseUrl = process.env[configured[0]];
 const vitestBin = new URL("../node_modules/vitest/vitest.mjs", import.meta.url);
 const child = spawn(process.execPath, [vitestBin.pathname, "run", ...process.argv.slice(2)], {
   cwd: process.cwd(),
