@@ -53,6 +53,6 @@
     "photoAlt": "foto"
   },
   "footer": {
-    "copyright": "Luis Simosa, 2023"
+    "copyright": "Luis Simosa, {year}"
   }
 }
